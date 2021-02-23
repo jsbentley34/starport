@@ -82,7 +82,7 @@ func Discover(sourcePath string) ([]Module, error) {
 
 	for _, xproto := range xprotopkgs {
 		var (
-			rxpath = strings.TrimPrefix(xproto.GoImportName, bpath)
+			rxpath = strings.TrimPrefix(xproto.GoImportPath(), bpath)
 			xpath  = filepath.Join(sourcePath, rxpath)
 		)
 

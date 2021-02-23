@@ -4,6 +4,7 @@ package protoanalysis
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 
 	"github.com/emicklei/proto"
@@ -25,6 +26,10 @@ type Package struct {
 
 	// GoImportName is the go package name of proto package.
 	GoImportName string
+}
+
+func (p Package) GoImportPath() string {
+	return strings.Split(p.GoImportName, ";")[0]
 }
 
 // DiscoverPackages recursively discovers proto files, parses them, and returns info about

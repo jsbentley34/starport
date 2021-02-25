@@ -7,24 +7,16 @@ import (
 func ExampleDiscover() {
 	pretty.Println(Discover("/home/ilker/Documents/code/src/github.com/tendermint/starport/local_test/moon"))
 	// outputs:
-	// 	[]msgs.Module{
-	// 		{
-	// 			Name:            "moon",
-	// 			TypesImportPath: "github.com/ilker/moon/x/moon/types",
-	// 			Msgs:            {
-	// 				{Name:"MsgUpdateUser", URI:"ilker.moon.moon.MsgUpdateUser"},
-	// 				{Name:"MsgDeleteUser", URI:"ilker.moon.moon.MsgDeleteUser"},
-	// 				{Name:"MsgCreateUser", URI:"ilker.moon.moon.MsgCreateUser"},
-	// 			},
-	// 		},
-	// 		{
-	// 			Name:            "elips",
-	// 			TypesImportPath: "github.com/ilker/moon/x/elips/types",
-	// 			Msgs:            {
-	// 				{Name:"MsgCreateBlog", URI:"ilker.moon.elips.MsgCreateBlog"},
-	// 				{Name:"MsgUpdateBlog", URI:"ilker.moon.elips.MsgUpdateBlog"},
-	// 				{Name:"MsgDeleteBlog", URI:"ilker.moon.elips.MsgDeleteBlog"},
-	// 			},
-	// 		},
-	// 	} nil
+	// []module.Module{
+	//   {
+	//     Name:            "moon",
+	//     TypesImportPath: "github.com/test/moon/x/moon/types",
+	//     Msgs: {
+	//       { Name:"MsgCreateUser", URI:"test.moon.moon.MsgCreateUser", FilePath:"/home/ilker/Documents/code/src/github.com/tendermint/starport/local_test/moon/proto/moon/tx.proto" },
+	//       { Name:"MsgDeleteUser", URI:"test.moon.moon.MsgDeleteUser", FilePath:"/home/ilker/Documents/code/src/github.com/tendermint/starport/local_test/moon/proto/moon/tx.proto" },
+	//       { Name:"MsgUpdateUser", URI:"test.moon.moon.MsgUpdateUser", FilePath:"/home/ilker/Documents/code/src/github.com/tendermint/starport/local_test/moon/proto/moon/tx.proto" },
+	//     },
+	//   },
+	// } nil
+
 }

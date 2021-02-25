@@ -1,0 +1,9 @@
+{
+    "include": ["/home/ilker/Documents/code/src/github.com/tendermint/starport/local_test/nuxt/nuxt/**/*"],
+  "compilerOptions": {
+      "declaration": true,
+    "paths": {
+      "*": ["/home/ilker/Documents/code/src/github.com/tendermint/starport/scripts/data/gen-nodetime/node_modules/*"]
+    }
+  }
+}

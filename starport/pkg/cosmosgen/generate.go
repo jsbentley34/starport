@@ -12,8 +12,8 @@ import (
 	"github.com/tendermint/starport/starport/pkg/cmdrunner"
 	"github.com/tendermint/starport/starport/pkg/cmdrunner/step"
 	"github.com/tendermint/starport/starport/pkg/gomodule"
-	"github.com/tendermint/starport/starport/pkg/nodetime/protobufjs"
 	"github.com/tendermint/starport/starport/pkg/nodetime/sta"
+	tsproto "github.com/tendermint/starport/starport/pkg/nodetime/ts-proto"
 	"github.com/tendermint/starport/starport/pkg/protoanalysis"
 	"github.com/tendermint/starport/starport/pkg/protoc"
 	"github.com/tendermint/starport/starport/pkg/protopath"
@@ -21,9 +21,13 @@ import (
 )
 
 var (
-	protocOuts = []string{
+	goOuts = []string{
 		"--gocosmos_out=plugins=interfacetype+grpc,Mgoogle/protobuf/any.proto=github.com/cosmos/cosmos-sdk/codec/types:.",
 		"--grpc-gateway_out=logtostderr=true:.",
+	}
+
+	tsOut = []string{
+		"--ts_proto_out=.",
 	}
 
 	openAPIOut = []string{
@@ -158,7 +162,7 @@ func (g *generator) generateGo() error {
 
 	// code generate for each module.
 	for _, pkg := range pkgs {
-		if err := protoc.Generate(g.ctx, tmp, pkg.Path, includePaths, protocOuts); err != nil {
+		if err := protoc.Generate(g.ctx, tmp, pkg.Path, includePaths, goOuts); err != nil {
 			return err
 		}
 	}
@@ -170,12 +174,12 @@ func (g *generator) generateGo() error {
 }
 
 func (g *generator) generateJS() error {
-	jsIncludePaths, err := g.resolveInclude(protopath.NewModule(sdkImport, sdkProto))
+	includePaths, err := g.resolveInclude(protopath.NewModule(sdkImport, sdkProto, sdkProtoThirdParty))
 	if err != nil {
 		return err
 	}
 
-	oaiIncludePaths, err := g.resolveInclude(protopath.NewModule(sdkImport, sdkProto, sdkProtoThirdParty))
+	tsprotoPluginPath, err := tsproto.BinaryPath()
 	if err != nil {
 		return err
 	}
@@ -195,17 +199,21 @@ func (g *generator) generateJS() error {
 			out = g.o.jsOut(pkg, moduleName)
 		)
 
-		// generate protobufjs types for each module.
-		err = protobufjs.Generate(
-			g.ctx,
-			out,
-			fileTypes,
-			pkg.Path,
-			jsIncludePaths,
-		)
+		prototmp, err := ioutil.TempDir("", "")
 		if err != nil {
 			return err
 		}
+		defer os.RemoveAll(prototmp)
+
+		// generate ts-proto types for each module.
+		err = protoc.Generate(
+			g.ctx,
+			prototmp,
+			pkg.Path,
+			includePaths,
+			tsOut,
+			protoc.Plugin(tsprotoPluginPath),
+		)
 
 		oaitemp, err := ioutil.TempDir("", "")
 		if err != nil {
@@ -218,7 +226,7 @@ func (g *generator) generateJS() error {
 			g.ctx,
 			oaitemp,
 			pkg.Path,
-			oaiIncludePaths,
+			includePaths,
 			openAPIOut,
 		)
 		if err != nil {
